@@ -33,6 +33,16 @@ class HospitalDB:
         self.db.commit()
         print(f"Vitals logged for ID: {p_id}")
 
+    def add_prescription(self, p_id, med_name, dosage, frequency, doc_name, date):
+        """Adds a medication record to the prescriptions table."""
+        query = """INSERT INTO prescriptions (p_id, medication_name, dosage, frequency, doctor_name, prescribed_date) 
+                   VALUES (%s, %s, %s, %s, %s, %s)"""
+        values = (p_id, med_name, dosage, frequency, doc_name, date)
+        self.cursor.execute(query, values)
+        self.db.commit()
+        print(f"✅ Prescription for {med_name} added to ID: {p_id}")
+
+    
     # --- READ / LOOKUP OPERATIONS ---
 
     def get_patient_record(self, p_id):
@@ -52,15 +62,7 @@ class HospitalDB:
         query = "SELECT * FROM vitals_log WHERE p_id = %s ORDER BY recorded_at DESC"
         self.cursor.execute(query, (p_id,))
         return self.cursor.fetchall()
-
-    def add_prescription(self, p_id, med_name, dosage, frequency, doc_name, date):
-        """Adds a medication record to the prescriptions table."""
-        query = """INSERT INTO prescriptions (p_id, medication_name, dosage, frequency, doctor_name, prescribed_date) 
-                   VALUES (%s, %s, %s, %s, %s, %s)"""
-        values = (p_id, med_name, dosage, frequency, doc_name, date)
-        self.cursor.execute(query, values)
-        self.db.commit()
-        print(f"✅ Prescription for {med_name} added to ID: {p_id}")
+        
 
     # --- UTILITY OPERATIONS ---
 
@@ -77,4 +79,5 @@ class HospitalDB:
     def close_connection(self):
         """Properly closes the database connection."""
         self.cursor.close()
+
         self.db.close()
